@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Sniffer</title>
+    <script>
+        async function startCapture() {
+            const response = await fetch('/start_capture', { method: 'POST' });
+            const result = await response.json();
+            alert(result.status);
+        }
+
+        async function stopCapture() {
+            const response = await fetch('/stop_capture', { method: 'POST' });
+            const result = await response.json();
+            alert(result.status);
+        }
+
+        async function fetchPackets() {
+            const response = await fetch('/get_packets');
+            const packets = await response.json();
+            const table = document.getElementById('packet-table-body');
+            table.innerHTML = ''; // Clear existing data
+            packets.forEach(packet => {
+                const row = `<tr>
+                                <td>${packet.src}</td>
+                                <td>${packet.dst}</td>
+                                <td>${packet.proto}</td>
+                                <td>${packet.len}</td>
+                             </tr>`;
+                table.innerHTML += row;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Network Packet Sniffer</h1>
+    <button onclick="startCapture()">Start Capture</button>
+    <button onclick="stopCapture()">Stop Capture</button>
+    <button onclick="fetchPackets()">Refresh Packets</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Protocol</th>
+                <th>Length</th>
+            </tr>
+        </thead>
+        <tbody id="packet-table-body"></tbody>
+    </table>
+</body>
+</html>
